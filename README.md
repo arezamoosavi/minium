@@ -1,0 +1,2 @@
+# minium
+Small deployment
