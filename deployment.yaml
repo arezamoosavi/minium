@@ -18,7 +18,7 @@ spec:
         app: webapp
     spec:
       containers:
-      - image: 10.10.0.1:5000/webapp:v3
+      - image: 10.10.0.1:5000/webapp:v1
         name: webapp
         resources: {}
 status: {}

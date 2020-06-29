@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from app import api
 
 app = FastAPI()
 
@@ -13,6 +12,3 @@ def read_root():
 async def create_item(sent_data):
     response = sent_data + "post response!"
     return {"messege": "Successfully Done!", "response": response}
-
-
-app.include_router(api.router)

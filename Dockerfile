@@ -1,33 +1,24 @@
-FROM centos:7
+FROM python:3.7.6-slim
 
-LABEL Vendor=”CentOS” \
-    License=GPLv2 \
-    Version=2.4.6–40
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN yum -y update \
-    &&  yum -y install epel-release \
-    &&  yum -y install gcc openssl-devel bzip2-devel libffi-devel
+ENV PIP_FORMAT=legacy
 
-RUN yum update -y && yum -y install yum-utils && yum -y groupinstall development
+RUN apt-get -y update && apt-get install -y python-pip python-dev libzbar-dev bash \
+    gcc python3-dev git libc-dev
 
-RUN yum -y update \
-    &&  yum install -y python37u python3-libs python3-devel python3-setuptools python3-pip
+RUN echo 'deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main' >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends apt-utils
 
+RUN apt-get install -y netcat && apt-get autoremove -y
 
-# Add the user UID:1000, GID:1000, home at /app
-RUN groupadd -r app -g 1000 && useradd -u 1000 -r -g app -m -d /app -s /sbin/nologin -c "App user" app && \
-    chmod 755 /app
+RUN adduser --disabled-password --gecos '' myuser
 
 COPY requirements.txt /requirements.txt
-RUN pip3 install --no-cache-dir -r /requirements.txt
-
-RUN mkdir -p /main
+RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY ./main /main
 
-RUN chmod +x main/run.sh
-
-WORKDIR /main
-
-CMD [ "/run.sh" ]
-EXPOSE 3000
+CMD ["uvicorn", "main.run_app:app", "--host", "0.0.0.0", "--port", "80"]
