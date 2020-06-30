@@ -21,4 +21,11 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY ./main /main
 
-CMD ["uvicorn", "main.run_app:app", "--host", "0.0.0.0", "--port", "80"]
+# CMD ["uvicorn", "main.run_app:app", "--host", "0.0.0.0", "--port", "80"]
+
+WORKDIR /main
+
+COPY /entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
